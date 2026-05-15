@@ -7,5 +7,9 @@ public class Main {
         for(int i=0;i<5;i++){
             System.out.println("hello");
         }
+        int a =-9,b=10;
+        AdditionClass add = new AdditionClass();
+        int ans = add.add(a,b);
+        System.out.println(ans);
     }
 }
