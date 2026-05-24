@@ -27,10 +27,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class ConfigSecurity{
 
-    private LoginRepo repo;
-    public ConfigSecurity(LoginRepo repo){
-        this.repo = repo;
-    }
+//    private LoginRepo repo;
+//    public ConfigSecurity(LoginRepo repo){
+//        this.repo = repo;
+//    }
+
+    @Autowired
+    UserDetailsService userDetailService;
 
 
     @Bean
@@ -42,31 +45,31 @@ public class ConfigSecurity{
         return  http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-
-        return new UserDetailsService() {
-
-            @Override
-            public UserDetails loadUserByUsername(String username)
-                    throws UsernameNotFoundException {
-
-                LoginModel user = repo.findByUsername(username);
-
-                if(user == null) {
-                    throw new UsernameNotFoundException(
-                            "User not found");
-                }
-                return new UserPrincipal(user);
-            }
-        };
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//
+//        return new UserDetailsService() {
+//
+//            @Override
+//            public UserDetails loadUserByUsername(String username)
+//                    throws UsernameNotFoundException {
+//
+//                LoginModel user = repo.findByUsername(username);
+//
+//                if(user == null) {
+//                    throw new UsernameNotFoundException(
+//                            "User not found");
+//                }
+//                return new UserPrincipal(user);
+//            }
+//        };
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(encoding());
-        provider.setUserDetailsService(userDetailsService());
+        provider.setUserDetailsService(userDetailService);
         return provider;
     }
     @Bean
