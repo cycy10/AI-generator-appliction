@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,13 +36,18 @@ public class ConfigSecurity{
     @Autowired
     UserDetailsService userDetailService;
 
+    @Autowired
+    JWTFilter jwtFilter;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf->csrf.disable()).formLogin(form->form.disable()).authorizeHttpRequests(request->request.anyRequest().permitAll())
+        http.csrf(csrf->csrf.disable()).formLogin(form->form.disable()).httpBasic(basic->basic.disable()).authorizeHttpRequests(request->request.requestMatchers("/login","/signup").permitAll().anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS));
+                                SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class);;
         return  http.build();
     }
 
